@@ -1,0 +1,44 @@
+#####################controller config#############
+
+#ROS parameter file
+#Note: aren’t setting use_sim_time on the controllers
+# - it gets propagated down from the controller manager.
+#The joint_state_broadcaster simply uses the wheel encoder positions to 
+#publish the /joint_states message that robot_state_publisher needs to 
+#generate the wheel transforms.
+
+# pass that in to the controller manager.
+#parameters for the controller manager.
+
+controller_manager:
+  ros__parameters: #double underline between ros&&parameters
+    update_rate: 30 #controller update rate 
+    #want to use this with a Gazebo simulation.
+    use_sim_time: true
+
+  #two controller names
+  #parameter determine controllers. 
+  #diff_drive_controller
+    diff_cont: #controller name #controllertype
+      type: diff_drive_controller/DiffDriveController 
+  #joint_state_broadcaster
+    joint_broad:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    
+
+diff_cont:
+  ros__parameters:
+    #rate: # set this higher than the controller manager update rate, it will be throttled
+    publish_rate: 30.00 #float needed
+    base_frame_id: base_link
+
+    left_wheel_names: ['left_wheel_joint']
+    right_wheel_names: ['right_wheel_joint']
+    wheel_separation: 0.297
+    wheel_radius: 0.033
+
+    use_stamped_vel: false
+
+# joint_broad:
+#   ros__parameters:
+#The joint_state_broadcaster simply uses the wheel encoder positions to publish the /joint_states message that robot_state_publisher needs to generate the wheel transforms. 

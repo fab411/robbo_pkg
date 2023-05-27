@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"> <!--without name-->
+<!--0. include core File into robot.urdf.xacro
+  ; 1. specify links
+  ; 2. colours
+  ; 3. base Link
+  ; 4. chassis 
+  ; 5. drive wheels 
+  ; 6. collision 
+  ; 7. inertia-->
+
+<!--....................xacro variables declaration..........................--> 
+
+<xacro:property name="chassis_length" value="0.3"/> 
+<xacro:property name="chassis_width" value="0.3"/>
+<xacro:property name="chassis_depth" value="0.15"/>
+<xacro:property name="chassis_mass" value="0.5"/>
+
+<xacro:property name="wheel_offset_x" value="0.1 "/> <!--connect to base_link tf-->
+<xacro:property name="wheel_offset_y" value="0.175"/> 
+<xacro:property name="wheel_offset_z" value="0.02"/>
+<xacro:property name="wheel_radius" value="0.05"/> 
+<xacro:property name="wheel_thickness" value="0.04"/>
+<xacro:property name="wheel_mass" value="0.1"/>
+
+<xacro:property name="caster_wheel_radius" value="0.05"/>
+<xacro:property name="caster_wheel_mass" value="0.1"/>
+<xacro:property name="caster_wheel_offset_x" value="0.24"/>
+<xacro:property name="caster_wheel_offset_z" value="${wheel_offset_z - wheel_radius + caster_wheel_radius}"/>
+
+<!--.........................................................................-->
+        <!--... all the joint and link names will go in here ... -->
+    <link name="base_link">
+    </link>
+
+    <joint name="base_footprint_joint" type="fixed"> 
+        <parent link="base_link"/>
+        <child link="base_footprint"/>
+        <!-- base_link not actually "on the ground", so z0 = wheelAxis ; z0 = z at zero-->
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="base_footprint">
+    </link>
+
+<!--.........................................................................-->
+            <!--... CHASSIS LINK... -->
+    <!--fixed joint: chassis link connected to base_link-->
+    <joint name="chassis_joint" type="fixed"> 
+        <parent link="base_link"/>
+        <child link="chassis"/>
+        <origin xyz="-${wheel_offset_x} 0 -${wheel_offset_z}"/>
+    </joint>
+
+    <link name="chassis">
+        <visual>
+            <!--set back reference point, bottom-rear-centre of the chassis -->
+            <origin xyz="${chassis_length/2} 0 ${chassis_depth/2}" rpy="0 0 0"/> 
+            <geometry>
+                <box size="${chassis_length} ${chassis_width} ${chassis_depth}"/>
+            </geometry>
+            <material name="feldgrau"/>
+        </visual>
+        <!--collision-->
+        <collision>
+            <origin xyz="${chassis_length/2} 0 ${chassis_depth/2}" rpy="0 0 0"/> 
+            <geometry>
+                <box size="${chassis_length} ${chassis_width} ${chassis_depth}"/>
+            </geometry> <!--no material needed-->
+        </collision>
+        <!--inertia-->
+        <xacro:inertial_box mass="${chassis_mass}" x="${chassis_length}" y="${chassis_width}" z="${chassis_depth}">
+            <origin xyz="${chassis_length/2} 0 ${chassis_depth/2}" rpy="0 0 0"/>
+        </xacro:inertial_box>
+    </link>
+
+    <!--specify Gazebo for each link.-->
+    <gazebo reference="chassis">
+        <!--Gazebo uses different material/colour system as RViz.-->
+        <material>Gazebo/BuildingFrame</material>
+    </gazebo>
+    
+<!--.........................................................................-->
+            <!--... WHEELS ... -->
+    <!--continuous joint: wheel connected to chassis link & base_link-->
+    <!--ROS though, cylinders by default oriented along Z axis.-->
+    <!--“roll” cylinder by quarter-turn around the X axis.-->
+    <!-- LEFT WHEEL LINK -->
+    <joint name="left_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="left_wheel"/>
+        <!--first: rotate clockwise (negative) around X (−pi/2 rad) -->
+        <!--after: move along +Y axis for wheels rotation axis -->
+        <origin xyz="0 ${wheel_offset_y} 0" rpy="-${pi/2} 0 0" />
+        <!--second: move along new Z-->
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="left_wheel">
+        <visual>
+            <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
+            </geometry>
+            <material name="battleship_gray"/>
+        </visual>
+        <!--collision-->
+        <collision>
+            <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
+            </geometry> <!--no material needed-->
+        </collision>
+        <!--inertia-->
+        <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_radius}" radius="${wheel_thickness}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <!--specify Gazebo for each link.-->
+    <gazebo reference="left_wheel">
+        <material>Gazebo/Wood</material>
+    </gazebo>
+
+    <!--..................................-->
+
+    <!-- RIGHT WHEEL LINK-->
+    <!--joint name="right_wheel_joint" type="fixed"> continuous -->
+    <joint name="right_wheel_joint" type="continuous"> <!--contininuous need published joint states-->
+        <parent link="base_link"/>
+        <child link="right_wheel"/>
+        <origin xyz="0 -${wheel_offset_y} 0" rpy="${pi/2} 0 0"/>
+        <axis xyz="0 0 -1"/>
+    </joint>
+
+    <link name="right_wheel">
+        <visual>
+            <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
+            </geometry>
+            <material name="battleship_gray"/>
+        </visual>
+        <!--collision-->
+        <collision>
+            <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
+            </geometry> <!--no material needed-->
+        </collision>
+        <!--inertia-->
+        <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_radius}" radius="${wheel_thickness}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <!--specify Gazebo for each link.-->
+    <gazebo reference="right_wheel">
+        <material>Gazebo/Wood</material>
+    </gazebo>
+
+    <!-- CASTER WHEEL LINK --><!-- OMNIWHEEL --><!-- 3and4 WHEEL -->
+    <!--frictionless sphere with inertia-->
+    <joint name="caster_wheel_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="caster_wheel"/>
+        <origin xyz="${caster_wheel_offset_x} 0 ${caster_wheel_offset_z}" rpy="0 0 0"/>
+    </joint>
+
+    <!--..................................-->
+
+    <link name="caster_wheel">
+        <visual>
+            <geometry>
+                <sphere radius="${caster_wheel_radius}" />
+            </geometry>
+            <material name="jet"/>
+        </visual>
+        <!--collision-->
+        <collision>
+            <geometry>
+                <sphere radius="${caster_wheel_radius}" />
+            </geometry> <!--no material needed-->
+        </collision>
+        <!--inertia-->
+        <xacro:inertial_sphere mass="${caster_wheel_mass}" radius="${caster_wheel_radius}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_sphere>
+    </link>
+
+    <!--specify Gazebo for each link.-->
+    <gazebo reference="caster_wheel">
+        <material>Gazebo/CloudySky</material>
+        <!--reducing friction, customise physical properties of the link-->
+        <mu1 value="0.001"/>
+        <mu2 value="0.001"/>
+    </gazebo>
+
+<!--.........................................................................-->
+
+
+</robot>
+

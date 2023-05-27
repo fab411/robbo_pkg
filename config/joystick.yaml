@@ -1,0 +1,37 @@
+joy_node:
+  ros__parameters:
+    device_id: 0
+    #device_name: "''" #as default
+    deadzone: 0.05
+    autorepeat_rate: 20.0
+    #sticky_buttons: false
+    #coalesce_interval_ms: 1
+
+
+#twist message specify each of the six dimensions -> differential drive robot controller can only linear X and angular Z
+    #Which joystick axis to use
+    #Max speed in regular mode
+    #Max speed in turbo mode
+    #disabling the “dead-man’s switch”
+
+teleop_node:
+  ros__parameters:
+    
+    axis_linear:  # Left thumb stick vertical
+      x: 1
+    scale_linear: #speed in x, if pushed to the limit
+      x: 0.5
+    scale_linear_turbo: #teleop-twist-joy mode: turbo
+      x: 1.0
+
+    axis_angular:  # Left thumb stick horizontal #rotating about x-axis
+      yaw: 0
+    scale_angular:
+      yaw: 0.5
+    scale_angular_turbo:
+      yaw: 1.0
+
+    #buttons to enable turbo and regular mode
+    require_enable_button: true #enable kill
+    enable_button: 9  # Left shoulder button
+    enable_turbo_button: 10  # Right shoulder button

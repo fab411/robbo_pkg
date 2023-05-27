@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!--ros2_control tag: details of the hardware interface (for the controller manager)-->
+    <!--ros2_control tag done, we’ve told it the hardware interface to load and which joints to associate with.-->
+    <!--name:GazeboSystem,type: system (general) or actuator or sensor-->
+    <ros2_control name="GazeboSystem" type="system"> 
+    
+        <hardware>
+            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        </hardware>
+
+        <joint name="left_wheel_joint">
+            <!--interfaces are being made available for that joint-->
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" /> 
+        </joint>
+        
+        <joint name="right_wheel_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+    </ros2_control>
+
+    <!--Gazebo tag tell Gazebo to load up the extra code that it needs.-->
+    <gazebo>
+        <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+            <!--ros2 control motor controllers-->
+            <!--file_path = '/home/fab/ros2_humble/src/robbo_pkg/' alternative  (find robbo_pkg) -->
+            <parameters>/home/fab/ros2_humble/src/robbo_pkg/config/controllers.yaml</parameters> <!--$/home/fab/ros2_humble-->
+            <!-- <parameters>$(find robbo_pkg)/config/controllers.yaml</parameters> -->
+
+
+        </plugin>
+    </gazebo>
+</robot>

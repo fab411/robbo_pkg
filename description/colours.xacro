@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"> #<!--without name-->
+<!-- jeden Wert durch 255 teilen, da der höchste Wert, den ein einzelner Farbkanal haben kann -->
+
+<material name="white">
+    <color rgba="1 1 1 1"/>
+</material>
+
+<material name="orange">
+    <color rgba="1 0.3 0.1 1"/>
+</material>
+
+<material name="blue">
+    <color rgba="0.2 0.2 1 1"/>
+</material>
+
+<material name="black">
+    <color rgba="0 0 0 1"/>
+</material>
+
+<material name="red">
+    <color rgba="1 0 0 1"/>
+</material>
+
+<material name="random1">
+    <color rgba="0.2 0.8 1 1"/>
+</material>
+
+<material name="random2">
+    <color rgba="1 0.2 0.6 0.1"/>
+</material>
+
+<material name="azure_web">
+    <color rgba="0 0.5 1 0.5"/>
+</material>
+
+<material name="black_olive">
+    <color rgba="0.23 0.24 0.21 0.5"/>
+</material>
+
+
+<!-- Roboter Modell -->
+
+<material name="feldgrau">
+    <color rgba="0.8 0.9 0.9 0.3"/>
+</material>
+
+<material name="brunswick_green">
+    <color rgba="0.11 0.30 0.24 0.4"/>
+</material>
+
+
+<material name="battleship_gray">
+    <color rgba="0.52 0.52 0.51 0.4"/>
+</material>
+
+<material name="jet">
+    <color rgba="0.2 0.2 0.2 0.4"/>
+</material>
+
+
+
+
+</robot>
